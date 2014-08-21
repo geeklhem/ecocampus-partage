@@ -1,0 +1,37 @@
+body {
+width: 800px;
+margin:auto;}
+
+html{
+border-top: 5px solid black;
+}
+
+.shareable
+{
+border: 1px solid black;
+width: 5cm;
+float: left;
+margin: 3px
+padding-top:0px;
+}
+
+.demande h3
+{
+border-top: 10px solid orange;
+margin-top:0px;
+}
+
+.propose h3
+{
+border-top: 10px solid green;
+margin-top:0px;
+}
+
+
+h2
+{
+clear: both;
+margin-bottom:0px;
+font-family: Sans;
+border-top: 5px solid black;
+}

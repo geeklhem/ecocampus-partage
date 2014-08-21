@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'partage_app/style.css' %}" />
+
+</head>
+<body>
+
+<h1> partage.ecocampus.ens.fr </h1>
+{% if user.is_authenticated %}
+    <p>Votre identifiant clipper est <em>{{ user.username }}</em>.  <a href="accounts/logout">Se déconnecter.</a> </p>
+
+    <div id="sort">Classer par :  <a href="categories">Categories</a> |  <a href="lieux">Lieux</a> </div>
+
+{% if msg %}
+{{msg}}
+{% endif %}
+
+{% if locations and sort == 'location' %}
+	
+    {% for loc in locations %}
+	<div class="location">
+        <h2> {{ loc.name }} </h2>
+		{% for obj in loc.shareable_set.all %}
+		<div class="shareable {{obj.classe}}">
+          <h3> {{ obj.name }} </h3>
+		  <p>Catégorie: {{obj.category}}. <em>L'utilisateur {{obj.owner.username}} {{obj.classe}} cet objet depuis le {{obj.added}}.</em></p>
+		  <p>{{obj.details}}</p>
+		  <a href="mailto:{{obj.owner.username}}@clipper.ens.fr?subject=%5B%C3%89cocampus-partage%5D">Envoyer un courriel</a>
+		  {% if obj.owner == user %}
+<form action="enlever"  method="post">
+{% csrf_token %}
+		  <input type="hidden" name="obj" value="{{obj.id}}" />
+		  <input type="submit" value="Retirer l'annonce" />
+</form>
+
+		  {% endif %}
+
+		</div>
+
+		{% endfor %}
+
+	</div>
+    {% endfor %}
+
+{% elif categories and sort == 'category' %}
+    {% for cat in categories %}
+	<div class="category">
+        <h2> {{ cat.name }} </h2>
+		{% for obj in cat.shareable_set.all %}
+		<div class="shareable {{obj.classe}}">
+          <h3> {{ obj.name }} </h3>
+		  <p>Lieu: {{obj.location}}. <em>L'utilisateur {{obj.owner.username}} {{obj.classe}} cet objet depuis le {{obj.added}}.</em></p>
+		  <p>{{obj.details}}</p>
+		  <a href="mailto:{{obj.owner.username}}@clipper.ens.fr?subject=%5B%C3%89cocampus-partage%5D">Envoyer un courriel</a>
+
+		  {% if obj.owner == user %}
+<form action="enlever"  method="post">
+{% csrf_token %}
+		  <input type="hidden" name="obj" value="{{obj.id}}" />
+		  <input type="submit" value="Retirer l'annonce" />
+</form>
+
+		  {% endif %}
+		</div>
+		{% endfor %}
+
+	</div>
+    {% endfor %}
+
+
+{% else %}
+    <p>Aucun lieu enregistré</p>
+{% endif %}
+
+
+
+<h2> Ajouter une annonce </h2>
+<form action="ajouter"  method="post">
+{% csrf_token %}
+Nom :  <input type="text" name="name" required/> <br />
+<input type="hidden" name="user" value="{{ user.id }}" /> 
+
+<input type="radio" name="classe" value="demande" checked /> Demande 
+<input type="radio" name="classe" value="propose" /> Propose <br />
+
+Lieu :
+<select name="location">
+
+{% for loc in locations %}
+<option value="{{ loc.id }}">{{ loc.name }}</option> 
+{% endfor %}
+</select> <br />
+Catégorie : 
+<select name="category">
+{% for cat in categories %}
+<option value="{{ cat.id }}">{{ cat.name }}</option> 
+{% endfor %}
+</select> <br />
+
+
+Informations suplémentaires:<br />
+<textarea name="details" rows="5" cols="50"></textarea><br />
+
+
+<input type="submit" value="Ajouter" />
+</form>
+
+
+{% else %}
+    <p>Bienvenue sur le système de partage d'objet proposé par Écocampus ! <br />
+	<a href="accounts/login">Connectez-vous</a> en utilisant vos identifiants clipper.</p>
+
+
+{% endif %}
+
+
+</body>
+</html>
