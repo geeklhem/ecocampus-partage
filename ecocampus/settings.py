@@ -1,11 +1,11 @@
 """
-Django settings for partage project.
+Django settings for ecocampus project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/1.6/topics/settings/
+https://docs.djangoproject.com/en/1.7/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/1.6/ref/settings/
+https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -14,10 +14,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'lu%*bj_464^hqgg7wmw7vl)q0&h4!4mi27=evxmd&hnf0^yl)('
+SECRET_KEY = 'o)u)+2j3(%^d!_i77bf=ut($p49!^(#%g2bpyi+oermd+x6@cp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -36,8 +36,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'partage_app',
-    "django_cas",
+    #'egafh',
+    #'consulquest',
+    'django_cas',
+    'partage_app'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -45,25 +47,24 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_cas.middleware.CASMiddleware',
 )
-
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'django_cas.backends.CASBackend',
 )
 
+ROOT_URLCONF = 'ecocampus.urls'
 
-ROOT_URLCONF = 'partage.urls'
-
-WSGI_APPLICATION = 'partage.wsgi.application'
+WSGI_APPLICATION = 'ecocampus.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.6/ref/settings/#databases
+# https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -73,9 +74,9 @@ DATABASES = {
 }
 
 # Internationalization
-#https://docs.djangoproject.com/en/1.6/topics/i18n/
+# https://docs.djangoproject.com/en/1.7/topics/i18n/
 
-LANGUAGE_CODE = 'fr-fr'
+LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -87,10 +88,11 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-
+# https://docs.djangoproject.com/en/1.7/howto/static-files/
+STATIC_ROOT = '/var/www/static/'
 STATIC_URL = '/static/'
 
-# CAS
 CAS_SERVER_URL = 'https://cas.eleves.ens.fr'
 CAS_AUTO_CREATE_USERS = True
+CAS_REDIRECT_URL = 'http://framasoft.org/'
+CAS_RETRY_LOGIN =True

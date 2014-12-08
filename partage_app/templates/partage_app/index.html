@@ -10,7 +10,7 @@
 
 <h1> partage.ecocampus.ens.fr </h1>
 {% if user.is_authenticated %}
-    <p>Votre identifiant clipper est <em>{{ user.username }}</em>.  <a href="accounts/logout">Se déconnecter.</a> </p>
+    <p>Votre identifiant clipper est <em>{{ user.username }}</em>.  <a href="{% url 'partage:logout' %}">Se déconnecter.</a> </p>
 
     <div id="sort">Classer par :  <a href="categories">Categories</a> |  <a href="lieux">Lieux</a> </div>
 
@@ -25,9 +25,10 @@
         <h2> {{ loc.name }} </h2>
 		{% for obj in loc.shareable_set.all %}
 		<div class="shareable {{obj.classe}}">
-          <h3> {{ obj.name }} </h3>
+		  <h3> {{ obj.name }} </h3>
+		  		  <p>{{obj.details}}</p>
 		  <p>Catégorie: {{obj.category}}. <em>L'utilisateur {{obj.owner.username}} {{obj.classe}} cet objet depuis le {{obj.added}}.</em></p>
-		  <p>{{obj.details}}</p>
+
 		  <a href="mailto:{{obj.owner.username}}@clipper.ens.fr?subject=%5B%C3%89cocampus-partage%5D">Envoyer un courriel</a>
 		  {% if obj.owner == user %}
 <form action="enlever"  method="post">
@@ -35,7 +36,9 @@
 		  <input type="hidden" name="obj" value="{{obj.id}}" />
 		  <input type="submit" value="Retirer l'annonce" />
 </form>
-
+<form action="{% url 'partage:edit' obj.id %}">
+		  <input type="submit" value="Éditer l'annonce" />
+</form>
 		  {% endif %}
 
 		</div>
@@ -52,8 +55,9 @@
 		{% for obj in cat.shareable_set.all %}
 		<div class="shareable {{obj.classe}}">
           <h3> {{ obj.name }} </h3>
-		  <p>Lieu: {{obj.location}}. <em>L'utilisateur {{obj.owner.username}} {{obj.classe}} cet objet depuis le {{obj.added}}.</em></p>
 		  <p>{{obj.details}}</p>
+	          <p>Lieu: {{obj.location}}. <em>L'utilisateur {{obj.owner.username}} {{obj.classe}} cet objet depuis le {{obj.added}}.</em></p>
+
 		  <a href="mailto:{{obj.owner.username}}@clipper.ens.fr?subject=%5B%C3%89cocampus-partage%5D">Envoyer un courriel</a>
 
 		  {% if obj.owner == user %}
@@ -61,6 +65,9 @@
 {% csrf_token %}
 		  <input type="hidden" name="obj" value="{{obj.id}}" />
 		  <input type="submit" value="Retirer l'annonce" />
+</form>
+<form action="{% url 'partage:edit' obj.id %}">
+		  <input type="submit" value="Éditer l'annonce" />
 </form>
 
 		  {% endif %}
@@ -80,7 +87,7 @@
 <h2> Ajouter une annonce </h2>
 <form action="ajouter"  method="post">
 {% csrf_token %}
-Nom :  <input type="text" name="name" required/> <br />
+Nom de l'objet  :  <input type="text" name="name" required/> <br />
 <input type="hidden" name="user" value="{{ user.id }}" /> 
 
 <input type="radio" name="classe" value="demande" checked /> Demande 
@@ -111,7 +118,7 @@ Informations suplémentaires:<br />
 
 {% else %}
     <p>Bienvenue sur le système de partage d'objet proposé par Écocampus ! <br />
-	<a href="accounts/login">Connectez-vous</a> en utilisant vos identifiants clipper.</p>
+	<a href="{% url 'partage:login' %}">Connectez-vous</a> en utilisant vos identifiants clipper.</p>
 
 
 {% endif %}
