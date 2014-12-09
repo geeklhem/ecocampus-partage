@@ -1,4 +1,6 @@
-from django.shortcuts import render
+#-*-coding: utf-8 -*-
+from django.shortcuts import render, get_object_or_404
+from django.core.urlresolvers import reverse
 from django.http import HttpResponse,  HttpResponseRedirect
 from django.template import RequestContext, loader
 from partage_app import models
@@ -27,9 +29,38 @@ def add(request):
                            classe=request.POST["classe"],
     )
     obj.save()
-    return HttpResponseRedirect("/","OK.")
+    #return index(request)
+    return HttpResponseRedirect(reverse('partage:index'))
+    #return HttpResponseRedirect(".","OK.")
 
 def remove(request):
     obj = models.Shareable.objects.get(id=request.POST["obj"])
     obj.delete()
-    return HttpResponseRedirect("/","OK.")
+    #return HttpResponseRedirect(".","OK.")
+    #return render(reverse('partage:index'))
+    return HttpResponseRedirect(reverse('partage:index'))
+
+def edit(request, obj_id):
+    obj = get_object_or_404(models.Shareable, id=obj_id)
+    if request.method == "POST":
+        user = models.User.objects.get(id=request.POST["user"])
+        if obj.owner != user: # do checks again
+            return HttpResponse("Il semblerait que vous ne soyez pas le propriétaire de l'objet en question...")
+        obj.details = request.POST["details"]
+        obj.name = request.POST["name"]
+        obj.save()
+        return HttpResponseRedirect(reverse('partage:index'))
+        
+    elif request.method == "GET":
+
+        loc = models.Location.objects.all()
+        categories = models.Category.objects.all()
+    
+        context = {"locations":loc, 
+                   "categories":categories,
+                   "obj":obj,
+                   "owner": str(obj.owner)
+                   }
+
+        return render(request, 'partage_app/edit.html', context)
+    #return HttpResponseRedirect(reverse('partage:index'))

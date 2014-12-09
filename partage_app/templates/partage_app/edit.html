@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'partage_app/style.css' %}" />
+  </head>
+  <body>
+    <h1> partage.ecocampus.ens.fr </h1>
+    {% if user.is_authenticated %}
+    <p>Votre identifiant clipper est <em>{{ user.username }}</em>.  <a href="{% url 'partage:logout' %}">Se déconnecter.</a> </p>
+
+    {% if user.username == owner %}
+    <h2> Modifier une annonce </h2>
+    
+    <form action="{% url 'partage:edit' obj.id %}"  method="post">
+      {% csrf_token %}
+      Nom de l'objet :  <input type="text" name="name" value="{{ obj.name }}" required/> <br />
+      <input type="hidden" name="user" value="{{ user.id }}" /> 
+
+      Informations suplémentaires:<br />
+      <textarea name="details" rows="5" cols="50">{{ obj.details }}</textarea><br />
+
+      <input type="submit" value="Modifier" />
+    </form>
+    {% else %}
+    <p> Vous n'êtes pas autorisé.e à modifier cet objet qui appartient à {{ owner }}, il ne vous appartient pas </p>
+    {% endif %}
+
+
+    {% else %}
+    <p>
+      Bienvenue sur le système de partage d'objet proposé par Écocampus ! <br />
+      <a href="{% url 'partage:login' %}">Connectez-vous</a> en utilisant vos identifiants clipper.
+    </p>
+
+
+    {% endif %}
+
+
+</body>
+</html>
